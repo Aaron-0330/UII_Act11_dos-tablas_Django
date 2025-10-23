@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ pasajero.nombre }} | Uber Backend{% endblock %}
+
+{% block contenido %}
+<article class="user-detail">
+    <div class="user-banner">
+        {% if pasajero.foto %}
+            <img src="{{ pasajero.foto.url }}" alt="Foto de {{ pasajero.nombre }}" class="detail-photo">
+        {% else %}
+            <div class="detail-placeholder">👤</div>
+        {% endif %}
+        <div class="user-info">
+            <h1>{{ pasajero.nombre }}</h1>
+            <h3>{{ pasajero.email }}</h3>
+            <p>Teléfono: {{ pasajero.telefono }}</p>
+            <p>Registrado el: {{ pasajero.fecha_registro|date:"d M, Y H:i" }}</p>
+        </div>
+    </div>
+
+    <div class="detail-actions">
+        <a href="{% url 'app_uber:editar_pasajero' pasajero.id_usuario %}" class="btn btn-secondary">✏️ Editar</a>
+        <a href="{% url 'app_uber:borrar_pasajero' pasajero.id_usuario %}" class="btn btn-danger">🗑️ Borrar</a>
+    </div>
+
+    <section class="cards-section">
+        <h2>Tarjetas de Pago</h2>
+        {% if pasajero.tarjetas.all %}
+        <ul class="card-list">
+            {% for tarjeta in pasajero.tarjetas.all %}
+            <li>
+                <strong>{{ tarjeta.tipo_tarjeta }}:</strong> **** **** **** {{ tarjeta.numero_tarjeta|slice:"-4:" }}
+                <span class="card-expiry">(Vence: {{ tarjeta.fecha_vencimiento|date:"m/Y" }})</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty-message">Este pasajero no tiene tarjetas registradas.</p>
+        {% endif %}
+    </section>
+</article>
+{% endblock %}

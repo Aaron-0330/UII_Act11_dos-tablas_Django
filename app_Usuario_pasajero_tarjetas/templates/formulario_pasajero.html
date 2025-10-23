@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block titulo %}{{ titulo }} | Uber Backend{% endblock %}
+
+{% block contenido %}
+<h2>{{ titulo }}</h2>
+<form method="post" enctype="multipart/form-data" class="form-styled">
+    {% csrf_token %}
+    
+    <fieldset class="form-section">
+        <legend>Datos del Pasajero</legend>
+        {{ form.as_p }}
+    </fieldset>
+
+    {% if formset %} {# Solo mostrar si estamos editando y hay formset de tarjetas #}
+    <fieldset class="form-section">
+        <legend>Tarjetas de Pago</legend>
+        {{ formset.management_form }}
+        {% for tarjeta_form in formset %}
+            <div class="card-form-item {% if tarjeta_form.instance.pk %}existing-card{% endif %}">
+                {% if tarjeta_form.instance.pk %}
+                    <h3>Tarjeta existente (ID: {{ tarjeta_form.instance.pk }})</h3>
+                {% else %}
+                    <h3>Nueva Tarjeta</h3>
+                {% endif %}
+                {{ tarjeta_form.as_p }}
+                {% if tarjeta_form.instance.pk %}
+                    <p class="delete-checkbox">{{ tarjeta_form.DELETE }} <label for="{{ tarjeta_form.DELETE.id_for_label }}">Eliminar esta tarjeta</label></p>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <p class="help-text">Puedes añadir o eliminar tarjetas.</p>
+    </fieldset>
+    {% endif %}
+
+    <div class="actions">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'app_uber:listar_pasajeros' %}" class="btn">Cancelar</a>
+    </div>
+</form>
+
+<script>
+    // Pequeño script para añadir un botón "Agregar Tarjeta" dinámicamente si es necesario
+    // Esto es un ejemplo básico, para una implementación robusta se usaría JS más avanzado.
+    document.addEventListener('DOMContentLoaded', function() {
+        const formsetContainer = document.querySelector('.form-styled fieldset:last-of-type');
+        if (formsetContainer && formsetContainer.querySelector('.card-form-item')) {
+            const addCardButton = document.createElement('button');
+            addCardButton.type = 'button';
+            addCardButton.classList.add('btn', 'btn-secondary', 'add-card-btn');
+            addCardButton.textContent = 'Añadir otra tarjeta';
+            addCardButton.style.marginTop = '1rem';
+            addCardButton.style.display = 'block';
+
+            addCardButton.addEventListener('click', function() {
+                // Clonar el último formulario vacío si existe
+                let emptyForm = document.querySelector('#id_tarjetas-empty');
+                if (!emptyForm) {
+                    console.error('No se encontró un formulario vacío para clonar.');
+                    return;
+                }
+
+                const newForm = emptyForm.cloneNode(true);
+                newForm.id = ''; // Remover ID para evitar duplicados
+                newForm.style.display = 'block'; // Mostrar el formulario clonado
+                
+                // Actualizar los IDs y nombres de los inputs
+                const totalForms = document.querySelector('#id_tarjetas-TOTAL_FORMS');
+                let currentForms = parseInt(totalForms.value);
+                
+                newForm.innerHTML = newForm.innerHTML.replace(/__prefix__/g, currentForms);
+                newForm.querySelector('h3').textContent = `Nueva Tarjeta`; // Actualizar título
+                
+                formsetContainer.insertBefore(newForm, addCardButton); // Insertar antes del botón
+                totalForms.value = currentForms + 1; // Incrementar el contador de formularios
+            });
+
+            formsetContainer.appendChild(addCardButton);
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block titulo %}Eliminar Pasajero | Uber Backend{% endblock %}
+
+{% block contenido %}
+<div class="confirmation-card">
+    <h2>¿Estás seguro de que quieres borrar a "{{ pasajero.nombre }}"?</h2>
+    <p>Esta acción no se puede deshacer y eliminará todas sus tarjetas asociadas.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="actions">
+            <button type="submit" class="btn btn-danger">Sí, Borrar</button>
+            <a href="{% url 'app_uber:detalle_pasajero' pasajero.id_usuario %}" class="btn">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

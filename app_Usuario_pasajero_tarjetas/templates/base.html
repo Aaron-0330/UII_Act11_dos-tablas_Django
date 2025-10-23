@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Uber Backend{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <header class="main-header">
+            <h1><a href="{% url 'app_uber:listar_pasajeros' %}">🚕 Uber Backend</a></h1>
+            <nav class="main-nav">
+                <a href="{% url 'app_uber:listar_pasajeros' %}">📋 Pasajeros</a>
+                <a href="{% url 'app_uber:crear_pasajero' %}">➕ Nuevo Pasajero</a>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            {% block contenido %}{% endblock %}
+        </main>
+
+        <footer class="main-footer">
+            <p>© 2025 Uber Backend - Aplicación educativa de Django</p>
+        </footer>
+    </div>
+</body>
+</html>

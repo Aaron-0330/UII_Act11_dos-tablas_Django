@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block titulo %}Pasajeros | Uber Backend{% endblock %}
+
+{% block contenido %}
+<div class="page-header">
+    <h2>Pasajeros Registrados</h2>
+    <a href="{% url 'app_uber:crear_pasajero' %}" class="btn btn-primary">+ Registrar Pasajero</a>
+</div>
+
+<ul class="user-grid">
+    {% for pasajero in pasajeros %}
+    <li class="user-card">
+        <a href="{% url 'app_uber:detalle_pasajero' pasajero.id_usuario %}">
+            {% if pasajero.foto %}
+                <img src="{{ pasajero.foto.url }}" alt="Foto de {{ pasajero.nombre }}" class="user-img">
+            {% else %}
+                <div class="user-placeholder">👤</div>
+            {% endif %}
+            <h3>{{ pasajero.nombre }}</h3>
+            <p class="user-email">{{ pasajero.email }}</p>
+            <p class="user-phone">{{ pasajero.telefono }}</p>
+        </a>
+    </li>
+    {% empty %}
+    <li class="no-items">No hay pasajeros registrados.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
